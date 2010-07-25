@@ -16,10 +16,14 @@ File::ConfigDir - Get directories of configuration files
 
 =cut
 
-$VERSION     = '0.001';
-@ISA         = qw(Exporter);
-@EXPORT      = ();
-@EXPORT_OK   = qw(config_dirs system_cfg_dir machine_cfg_dir core_cfg_dir site_cfg_dir vendor_cfg_dir local_cfg_dir user_cfg_dir);
+$VERSION = '0.001';
+@ISA     = qw(Exporter);
+@EXPORT  = ();
+@EXPORT_OK = (
+               qw(config_dirs system_cfg_dir machine_cfg_dir),
+               qw(core_cfg_dir site_cfg_dir vendor_cfg_dir),
+               qw(local_cfg_dir user_cfg_dir)
+             );
 %EXPORT_TAGS = ( ALL => [@EXPORT_OK], );
 
 my $haveFileHomeDir = 0;
@@ -45,37 +49,66 @@ EOP
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+    use File::ConfigDir ':ALL';
 
-Perhaps a little code snippet.
+    my @cfgdirs = config_dirs();
+    my @appcfgdirs = config_dirs('app');
 
-    use File::ConfigDir;
+    # install support
+    my $site_cfg_dir = site_cfg_dir();
+    my $vendor_cfg_dir = site_cfg_dir();
 
-    my $foo = File::ConfigDir->new();
-    ...
+=head1 DESCRIPTION
+
+This module is a helper for installing, reading and finding configuration
+file locations. It's intended to work in every supported Perl5 environment
+and will always try to Do The Right Thing(tm).
+
+C<File::ConfigDir> is a module to help out when perl modules (especially
+applications) need to store and read configuration files from more than
+one location. Writing user configuration is easy thanks to
+L<File::HomeDir>, but what when the system administrator needs to place
+some global configuration or there will be system related configuration
+(in C</etc> on UNIX(tm) or C<$ENV{windir}> on Windows(tm)) and some
+network configuration in nfs mapped C</etc/p5-app> or
+C<$ENV{ALLUSERSPROFILE} . "\\Application Data\\p5-app">, respectively.
 
 =head1 EXPORT
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+Every function listed below can be exported, either by name or using the
+tag C<:ALL>.
 
 =head1 SUBROUTINES/METHODS
+
+All functions can take one optional argument as application specific
+configuration directory. If given, it will be embedded at the right (tm)
+place of the resulting path.
 
 =cut
 
 sub _find_common_base_dir
 {
-    my ($dira, $dirb) = @_;
-    while( $dira ne $dirb )
+    my ( $dira, $dirb ) = @_;
+    my ( $va, $da, undef ) = File::Spec->splitpath($dira);
+    my ( $vb, $db, undef ) = File::Spec->splitpath($dirb);
+    my @dirsa = File::Spec->splitdir($da);
+    my @dirsb = File::Spec->splitdir($db);
+    my @commondir;
+    my $max = $#dirsa < $#dirsb ? $#dirsa : $#dirsb;
+    for my $i ( 0 .. $max )
     {
-        (undef, $dira) = File::Basename::fileparse($dira);
-        (undef, $dirb) = File::Basename::fileparse($dirb);
+        $dirsa[$i] eq $dirsb[$i] or last;
+        push( @commondir, $dirsa[$i] );
     }
 
-    return $dira;
+    return File::Spec->catdir( $va, @commondir );
 }
 
 =head2 system_cfg_dir
+
+Returns the configuration directory where configuration files of the
+operating system resides. For Unices this is C</etc>, for MSWin32 it's
+the value of the environment variable C<%windir%>.
 
 =cut
 
@@ -85,7 +118,6 @@ my $system_cfg_dir = sub {
     if ( $^O eq "MSWin32" )
     {
         push( @dirs, $ENV{windir} );
-        # XXX All Users\\Application Data\\ ...
     }
     else
     {
@@ -104,6 +136,11 @@ sub system_cfg_dir
 
 =head2 machine_cfg_dir
 
+Returns the configuration directory where configuration files of the
+operating system resides. For Unices this is C</etc>, for MSWin32 it's
+the value of the environment variable C<%ALLUSERSPROFILE%> concatenated
+with the basename of the environment variable C<%APPDATA%>.
+
 =cut
 
 my $machine_cfg_dir = sub {
@@ -111,11 +148,9 @@ my $machine_cfg_dir = sub {
     my @dirs;
     if ( $^O eq "MSWin32" )
     {
-        # ALLUSERSPROFILE
         my $alluserprof = $ENV{ALLUSERSPROFILE};
-        my $appdatabase = File::Basename::basename($ENV{APPDATA});
-        push( @dirs, File::Spec->catdir($alluserprof, $appdatabase, @cfg_base ) );
-        # XXX All Users\\Application Data\\ ...
+        my $appdatabase = File::Basename::basename( $ENV{APPDATA} );
+        push( @dirs, File::Spec->catdir( $alluserprof, $appdatabase, @cfg_base ) );
     }
     else
     {
@@ -133,6 +168,8 @@ sub machine_cfg_dir
 }
 
 =head2 core_cfg_dir
+
+Returns the C<etc> directory below C<$Config{prefix}>.
 
 =cut
 
@@ -154,19 +191,22 @@ sub core_cfg_dir
 
 =head2 site_cfg_dir
 
+Returns the C<etc> directory below C<$Config{sitelib_stem}> or the common
+base directory of C<$Config{sitelib}> and C<$Config{sitebin}>.
+
 =cut
 
 my $site_cfg_dir = sub {
     my @cfg_base = @_;
     my @dirs;
 
-    if( $Config{sitelib_stem} )
+    if ( $Config{sitelib_stem} )
     {
         push( @dirs, File::Spec->catdir( $Config{sitelib_stem}, "etc", @cfg_base ) );
     }
     else
     {
-        my $sitelib_stem = _find_common_base_dir($Config{sitelib}, $Config{sitebin});
+        my $sitelib_stem = _find_common_base_dir( $Config{sitelib}, $Config{sitebin} );
         push( @dirs, File::Spec->catdir( $sitelib_stem, "etc", @cfg_base ) );
     }
 
@@ -183,19 +223,22 @@ sub site_cfg_dir
 
 =head2 vendor_cfg_dir
 
+Returns the C<etc> directory below C<$Config{vendorlib_stem}> or the common
+base directory of C<$Config{vendorlib}> and C<$Config{vendorbin}>.
+
 =cut
 
 my $vendor_cfg_dir = sub {
     my @cfg_base = @_;
     my @dirs;
 
-    if( $Config{sitelib_stem} )
+    if ( $Config{sitelib_stem} )
     {
         push( @dirs, File::Spec->catdir( $Config{vendorlib_stem}, "etc", @cfg_base ) );
     }
     else
     {
-        my $vendorlib_stem = _find_common_base_dir($Config{vendorlib}, $Config{vendorbin});
+        my $vendorlib_stem = _find_common_base_dir( $Config{vendorlib}, $Config{vendorbin} );
         push( @dirs, File::Spec->catdir( $vendorlib_stem, "etc", @cfg_base ) );
     }
 
@@ -212,13 +255,16 @@ sub vendor_cfg_dir
 
 =head2 local_cfg_dir
 
+Extracts the C<INSTALL_BASE> from C<$ENV{PERL_MM_OPT}> and returns the
+C<etc> directory below it.
+
 =cut
 
 my $local_cfg_dir = sub {
     my @cfg_base = @_;
     my @dirs;
 
-    if ( $INC{'local/lib.pm'} )
+    if ( $INC{'local/lib.pm'} && $ENV{PERL_MM_OPT} && $ENV{PERL_MM_OPT} =~ m/.*INSTALL_BASE=([^"']*)['"]?$/ )
     {
         ( my $cfgdir = $ENV{PERL_MM_OPT} ) =~ s/.*INSTALL_BASE=([^"']*)['"]?$/$1/;
         push( @dirs, File::Spec->catdir( $cfgdir, "etc", @cfg_base ) );
@@ -236,6 +282,9 @@ sub local_cfg_dir
 }
 
 =head2 user_cfg_dir
+
+Returns the users home folder using L<File::HomeDir>. Without
+File::HomeDir, nothing is returned.
 
 =cut
 
@@ -261,6 +310,9 @@ sub user_cfg_dir
 
     @cfgdirs = config_dirs();
     @cfgdirs = config_dirs( 'appname' );
+
+Tries to get all available configuration directories as described above.
+Returns those who exists and are readable.
 
 =cut
 
