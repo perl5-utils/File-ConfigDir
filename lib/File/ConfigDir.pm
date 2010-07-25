@@ -7,6 +7,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 use Carp qw(croak);
 use Config;
 use Exporter ();
+require File::Basename;
 require File::Spec;
 
 =head1 NAME
@@ -18,7 +19,7 @@ File::ConfigDir - Get directories of configuration files
 $VERSION     = '0.001';
 @ISA         = qw(Exporter);
 @EXPORT      = ();
-@EXPORT_OK   = qw(config_dirs);
+@EXPORT_OK   = qw(config_dirs system_cfg_dir machine_cfg_dir core_cfg_dir site_cfg_dir vendor_cfg_dir local_cfg_dir user_cfg_dir);
 %EXPORT_TAGS = ( ALL => [@EXPORT_OK], );
 
 my $haveFileHomeDir = 0;
@@ -60,6 +61,20 @@ if you don't export anything, such as for a purely object-oriented module.
 
 =head1 SUBROUTINES/METHODS
 
+=cut
+
+sub _find_common_base_dir
+{
+    my ($dira, $dirb) = @_;
+    while( $dira ne $dirb )
+    {
+        (undef, $dira) = File::Basename::fileparse($dira);
+        (undef, $dirb) = File::Basename::fileparse($dirb);
+    }
+
+    return $dira;
+}
+
 =head2 system_cfg_dir
 
 =cut
@@ -96,7 +111,10 @@ my $machine_cfg_dir = sub {
     my @dirs;
     if ( $^O eq "MSWin32" )
     {
-        push( @dirs, $ENV{windir} );
+        # ALLUSERSPROFILE
+        my $alluserprof = $ENV{ALLUSERSPROFILE};
+        my $appdatabase = File::Basename::basename($ENV{APPDATA});
+        push( @dirs, File::Spec->catdir($alluserprof, $appdatabase, @cfg_base ) );
         # XXX All Users\\Application Data\\ ...
     }
     else
@@ -142,7 +160,16 @@ my $site_cfg_dir = sub {
     my @cfg_base = @_;
     my @dirs;
 
-    push( @dirs, File::Spec->catdir( $Config{sitelib_stem}, "etc", @cfg_base ) );
+    if( $Config{sitelib_stem} )
+    {
+        push( @dirs, File::Spec->catdir( $Config{sitelib_stem}, "etc", @cfg_base ) );
+    }
+    else
+    {
+        my $sitelib_stem = _find_common_base_dir($Config{sitelib}, $Config{sitebin});
+        push( @dirs, File::Spec->catdir( $sitelib_stem, "etc", @cfg_base ) );
+    }
+
     return @dirs;
 };
 
@@ -162,7 +189,16 @@ my $vendor_cfg_dir = sub {
     my @cfg_base = @_;
     my @dirs;
 
-    push( @dirs, File::Spec->catdir( $Config{vendorlib_stem}, "etc", @cfg_base ) );
+    if( $Config{sitelib_stem} )
+    {
+        push( @dirs, File::Spec->catdir( $Config{vendorlib_stem}, "etc", @cfg_base ) );
+    }
+    else
+    {
+        my $vendorlib_stem = _find_common_base_dir($Config{vendorlib}, $Config{vendorbin});
+        push( @dirs, File::Spec->catdir( $vendorlib_stem, "etc", @cfg_base ) );
+    }
+
     return @dirs;
 };
 
@@ -184,7 +220,7 @@ my $local_cfg_dir = sub {
 
     if ( $INC{'local/lib.pm'} )
     {
-        ( my $cfgdir = $ENV{PERL_MM_OPT} ) =~ s/.*INSTALL_BASE=([^"']*)['"]$/$1/;
+        ( my $cfgdir = $ENV{PERL_MM_OPT} ) =~ s/.*INSTALL_BASE=([^"']*)['"]?$/$1/;
         push( @dirs, File::Spec->catdir( $cfgdir, "etc", @cfg_base ) );
     }
 
