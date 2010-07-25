@@ -3,7 +3,7 @@ abstract: 'Get directories of configuration files'
 author:
   - 'Jens Rehsack <rehsack@cpan.org>'
 build_requires:
-  Test::More: 0
+  Test::More: 0.90
 configure_requires:
   Module::Build: 0.36
 generated_by: 'Module::Build version 0.3607'
@@ -16,6 +16,12 @@ provides:
   File::ConfigDir:
     file: lib/File/ConfigDir.pm
     version: 0.001
+recommends:
+  File::HomeDir: 0.50
+requires:
+  Carp: 0
+  File::Basename: 0
+  File::Spec: 0
 resources:
   license: http://dev.perl.org/licenses/
 version: 0.001

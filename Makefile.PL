@@ -5,7 +5,10 @@ WriteMakefile
           'NAME' => 'File::ConfigDir',
           'VERSION_FROM' => 'lib/File/ConfigDir.pm',
           'PREREQ_PM' => {
-                           'Test::More' => 0
+                           'Carp' => 0,
+                           'File::Basename' => 0,
+                           'File::Spec' => 0,
+                           'Test::More' => '0.90'
                          },
           'INSTALLDIRS' => 'site',
           'EXE_FILES' => [],
