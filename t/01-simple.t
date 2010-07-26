@@ -24,15 +24,15 @@ foreach my $fn (@supported_functions)
     my @dirs = &{$faddr}();
     if ( "config_dirs" eq $fn )
     {
-        ok( scalar @dirs > 1, "config_dirs" );    # we expect at least system_cfg_dir and user_cfg_dir
+        ok( scalar @dirs > 1, "config_dirs" ) or diag( join( ",", @dirs ) );    # we expect at least system_cfg_dir and user_cfg_dir
     }
     elsif ( $fn =~ m/(?:local|user)_cfg_dir/ )
     {
-        ok( scalar @dirs <= 1, $fn );    # probably we do not have local::lib or File::HomeDir
+        ok( scalar @dirs <= 1, $fn ) or diag( join( ",", @dirs ) );    # probably we do not have local::lib or File::HomeDir
     }
     else
     {
-        ok( scalar @dirs == 1, $fn );
+        ok( scalar @dirs == 1, $fn ) or diag( join( ",", @dirs ) );
     }
 }
 
