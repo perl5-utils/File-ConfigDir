@@ -232,7 +232,7 @@ my $vendor_cfg_dir = sub {
     my @cfg_base = @_;
     my @dirs;
 
-    if ( $Config{sitelib_stem} )
+    if ( $Config{vendorlib_stem} )
     {
         push( @dirs, File::Spec->catdir( $Config{vendorlib_stem}, "etc", @cfg_base ) );
     }
