@@ -16,13 +16,13 @@ File::ConfigDir - Get directories of configuration files
 
 =cut
 
-$VERSION = '0.001';
+$VERSION = '0.003';
 @ISA     = qw(Exporter);
 @EXPORT  = ();
 @EXPORT_OK = (
                qw(config_dirs system_cfg_dir machine_cfg_dir),
                qw(core_cfg_dir site_cfg_dir vendor_cfg_dir),
-               qw(local_cfg_dir user_cfg_dir)
+               qw(local_cfg_dir here_cfg_dir user_cfg_dir)
              );
 %EXPORT_TAGS = ( ALL => [@EXPORT_OK], );
 
@@ -281,6 +281,29 @@ sub local_cfg_dir
     return &{$local_cfg_dir}(@cfg_base);
 }
 
+=head2 here_cfg_dir
+
+Returns the path for the C<etc> directory below the current directory.
+
+=cut
+
+my $here_cfg_dir = sub {
+    my @cfg_base = @_;
+    my @dirs;
+
+    push( @dirs, File::Spec->catdir( File::Spec->rel2abs( File::Spec->curdir() ), @cfg_base, "etc" ) );
+
+    return @dirs;
+};
+
+sub here_cfg_dir
+{
+    my @cfg_base = @_;
+    1 < scalar(@cfg_base)
+      and croak "here_cfg_dir(;\$), not here_cfg_dir(" . join( ",", ("\$") x scalar(@cfg_base) ) . ")";
+    return &{$here_cfg_dir}(@cfg_base);
+}
+
 =head2 user_cfg_dir
 
 Returns the users home folder using L<File::HomeDir>. Without
@@ -326,7 +349,7 @@ sub config_dirs
     push( @dirs,
           &{$system_cfg_dir}(@cfg_base), &{$machine_cfg_dir}(@cfg_base), &{$core_cfg_dir}(@cfg_base),
           &{$site_cfg_dir}(@cfg_base),   &{$vendor_cfg_dir}(@cfg_base),  &{$local_cfg_dir}(@cfg_base),
-          &{$user_cfg_dir}(@cfg_base), );
+          &{$here_cfg_dir}(@cfg_base), &{$user_cfg_dir}(@cfg_base), );
 
     @dirs = grep { -d $_ && -r $_ } uniq(@dirs);
 

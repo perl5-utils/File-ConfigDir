@@ -15,7 +15,7 @@ name: File-ConfigDir
 provides:
   File::ConfigDir:
     file: lib/File/ConfigDir.pm
-    version: 0.001
+    version: 0.003
 recommends:
   File::HomeDir: 0.50
 requires:
@@ -24,4 +24,4 @@ requires:
   File::Spec: 0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.001
+version: 0.003

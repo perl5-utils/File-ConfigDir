@@ -1,5 +1,8 @@
 Revision history for File-ConfigDir
 
+0.003   July 28th, 2010
+        - fix typo and use here_cfg_dir instead of user_cfg_dir twice
+
 0.002   July 27th, 2010
 	- add here_cfg_dir
 
