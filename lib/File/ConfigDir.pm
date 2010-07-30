@@ -16,7 +16,7 @@ File::ConfigDir - Get directories of configuration files
 
 =cut
 
-$VERSION = '0.003';
+$VERSION = '0.004';
 @ISA     = qw(Exporter);
 @EXPORT  = ();
 @EXPORT_OK = (
@@ -37,13 +37,13 @@ eval {
 
 if ( eval { require List::MoreUtils; } )
 {
-    List::MoreUtils->import("uniq");
+    *_uniq = \&List::MoreUtils::uniq;
 }
 else
 {
     # from PP part of List::MoreUtils
     eval <<'EOP';
-sub uniq(&@) {
+sub _uniq(&@) {
     my %h;
     map { $h{$_}++ == 0 ? $_ : () } @_;
 }
@@ -478,7 +478,7 @@ sub config_dirs
           &{$core_cfg_dir}(@cfg_base), &{$site_cfg_dir}(@cfg_base),   &{$vendor_cfg_dir}(@cfg_base),  
           &{$here_cfg_dir}(@cfg_base), &{$user_cfg_dir}(@cfg_base), &{$xdg_config_home}(@cfg_base), );
 
-    @dirs = grep { -d $_ && -r $_ } uniq(@dirs);
+    @dirs = grep { -d $_ && -r $_ } _uniq(@dirs);
 
     return @dirs;
 }

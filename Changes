@@ -1,6 +1,10 @@
 Revision history for File-ConfigDir
 
-0.003   July 28th, 2010
+0.004   July 30th, 2010
+	- make helper function uniq private (_uniq) to avoid
+	  Pod::Coverage test fail on systems without List::MoreUtils
+
+0.003   July 30th, 2010
         - fix typo and use here_cfg_dir instead of user_cfg_dir twice
 	- add singleapp_cfg_dir and locallib_cfg_dir to free local_cfg_dir
 	  for FHS /usr/local/etc (suggested by mst)

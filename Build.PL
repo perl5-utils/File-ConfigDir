@@ -9,7 +9,10 @@ my $builder = Module::Build->new(
     dist_author       => q{Jens Rehsack <rehsack@cpan.org>},
     dist_version_from => 'lib/File/ConfigDir.pm',
     build_requires    => { 'Test::More' => '0.90', },
-    recommends        => { 'File::HomeDir' => '0.50', },
+    recommends        => {
+	'File::HomeDir'   => '0.50',
+	'List::MoreUtils' => '0.22',
+    },
     requires          => {
 	'Carp'           => 0,
 	'File::Basename' => 0,
