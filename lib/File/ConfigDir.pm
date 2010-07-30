@@ -20,9 +20,12 @@ $VERSION = '0.003';
 @ISA     = qw(Exporter);
 @EXPORT  = ();
 @EXPORT_OK = (
-               qw(config_dirs system_cfg_dir machine_cfg_dir),
+               qw(config_dirs system_cfg_dir desktop_cfg_dir),
+	       qw(xdg_config_dirs machine_cfg_dir),
                qw(core_cfg_dir site_cfg_dir vendor_cfg_dir),
-               qw(local_cfg_dir here_cfg_dir user_cfg_dir)
+               qw(locallib_cfg_dir local_cfg_dir),
+	       qw(here_cfg_dir singleapp_cfg_dir),
+	       qw(xdg_config_home user_cfg_dir)
              );
 %EXPORT_TAGS = ( ALL => [@EXPORT_OK], );
 
@@ -65,13 +68,16 @@ file locations. It's intended to work in every supported Perl5 environment
 and will always try to Do The Right Thing(tm).
 
 C<File::ConfigDir> is a module to help out when perl modules (especially
-applications) need to store and read configuration files from more than
+applications) need to read and store configuration files from more than
 one location. Writing user configuration is easy thanks to
 L<File::HomeDir>, but what when the system administrator needs to place
 some global configuration or there will be system related configuration
 (in C</etc> on UNIX(tm) or C<$ENV{windir}> on Windows(tm)) and some
 network configuration in nfs mapped C</etc/p5-app> or
 C<$ENV{ALLUSERSPROFILE} . "\\Application Data\\p5-app">, respectively.
+
+C<File::ConfigDir> has no "do what I mean" mode - it's entirely up to the
+user to pick the right directory for each particular application.
 
 =head1 EXPORT
 
@@ -136,14 +142,22 @@ sub system_cfg_dir
 
 =head2 machine_cfg_dir
 
+Alias for desktop_cfg_dir - depreciated.
+
+=head2 xdg_config_dirs
+
+Alias for desktop_cfg_dir
+
+=head2 desktop_cfg_dir
+
 Returns the configuration directory where configuration files of the
-operating system resides. For Unices this is C</etc>, for MSWin32 it's
-the value of the environment variable C<%ALLUSERSPROFILE%> concatenated
-with the basename of the environment variable C<%APPDATA%>.
+desktop applications resides. For Unices this is C</etc/xdg>, for MSWin32
+it's the value of the environment variable C<%ALLUSERSPROFILE%>
+concatenated with the basename of the environment variable C<%APPDATA%>.
 
 =cut
 
-my $machine_cfg_dir = sub {
+my $desktop_cfg_dir = sub {
     my @cfg_base = @_;
     my @dirs;
     if ( $^O eq "MSWin32" )
@@ -154,17 +168,35 @@ my $machine_cfg_dir = sub {
     }
     else
     {
-        push( @dirs, File::Spec->catdir( "/etc", @cfg_base ) );
+	if( $ENV{XDG_CONFIG_DIRS} )
+	{
+	    @dirs = split( ":", $ENV{XDG_CONFIG_DIRS} );
+	    @dirs = map { File::Spec->catdir( $_, @cfg_base ) } @dirs;
+	}
+	else
+	{
+	    push( @dirs, File::Spec->catdir( "/etc", "xdg", @cfg_base ) );
+	}
     }
     return @dirs;
 };
 
-sub machine_cfg_dir
+sub desktop_cfg_dir
 {
     my @cfg_base = @_;
     1 < scalar(@cfg_base)
-      and croak "machine_cfg_dir(;\$), not machine_cfg_dir(" . join( ",", ("\$") x scalar(@cfg_base) ) . ")";
-    return &{$machine_cfg_dir}(@cfg_base);
+      and croak "desktop_cfg_dir(;\$), not desktop_cfg_dir(" . join( ",", ("\$") x scalar(@cfg_base) ) . ")";
+    return &{$desktop_cfg_dir}(@cfg_base);
+}
+
+sub machine_cfg_dir
+{
+    goto \&desktop_cfg_dir;
+}
+
+sub xdg_config_dirs
+{
+    goto \&desktop_cfg_dir;
 }
 
 =head2 core_cfg_dir
@@ -253,10 +285,33 @@ sub vendor_cfg_dir
     return &{$vendor_cfg_dir}(@cfg_base);
 }
 
+=head2 singleapp_cfg_dir
+
+=cut
+
+my $singleapp_cfg_dir = sub {
+    my @dirs;
+
+    my $appbin = File::Basename::dirname( $0 );
+    my $appdir = File::Basename::dirname( $appbin );
+    push( @dirs, File::Spec->catdir( $appdir, "etc" ) );
+
+    return @dirs;
+};
+
+sub singleapp_cfg_dir
+{
+    my @cfg_base = @_;
+    0 == scalar(@cfg_base)
+      or croak "singleapp_cfg_dir(), not singleapp_cfg_dir(" . join( ",", ("\$") x scalar(@cfg_base) ) . ")";
+    return &{$singleapp_cfg_dir}();
+}
+
 =head2 local_cfg_dir
 
-Extracts the C<INSTALL_BASE> from C<$ENV{PERL_MM_OPT}> and returns the
-C<etc> directory below it.
+Returns the configuration directory for distribution independent, 3rd
+party applications. While this directory doesn't exists for MSWin32,
+there will be only the path C</usr/local/etc> for Unices.
 
 =cut
 
@@ -264,10 +319,9 @@ my $local_cfg_dir = sub {
     my @cfg_base = @_;
     my @dirs;
 
-    if ( $INC{'local/lib.pm'} && $ENV{PERL_MM_OPT} && $ENV{PERL_MM_OPT} =~ m/.*INSTALL_BASE=([^"']*)['"]?$/ )
+    unless ( $^O eq "MSWin32" )
     {
-        ( my $cfgdir = $ENV{PERL_MM_OPT} ) =~ s/.*INSTALL_BASE=([^"']*)['"]?$/$1/;
-        push( @dirs, File::Spec->catdir( $cfgdir, "etc", @cfg_base ) );
+	push( @dirs, File::Spec->catdir( "/usr", "local", "etc", @cfg_base ) );
     }
 
     return @dirs;
@@ -281,9 +335,37 @@ sub local_cfg_dir
     return &{$local_cfg_dir}(@cfg_base);
 }
 
+=head2 locallib_cfg_dir
+
+Extracts the C<INSTALL_BASE> from C<$ENV{PERL_MM_OPT}> and returns the
+C<etc> directory below it.
+
+=cut
+
+my $locallib_cfg_dir = sub {
+    my @cfg_base = @_;
+    my @dirs;
+
+    if ( $INC{'local/lib.pm'} && $ENV{PERL_MM_OPT} && $ENV{PERL_MM_OPT} =~ m/.*INSTALL_BASE=([^"']*)['"]?$/ )
+    {
+        ( my $cfgdir = $ENV{PERL_MM_OPT} ) =~ s/.*INSTALL_BASE=([^"']*)['"]?$/$1/;
+        push( @dirs, File::Spec->catdir( $cfgdir, "etc", @cfg_base ) );
+    }
+
+    return @dirs;
+};
+
+sub locallib_cfg_dir
+{
+    my @cfg_base = @_;
+    1 < scalar(@cfg_base)
+      and croak "locallib_cfg_dir(;\$), not locallib_cfg_dir(" . join( ",", ("\$") x scalar(@cfg_base) ) . ")";
+    return &{$locallib_cfg_dir}(@cfg_base);
+}
+
 =head2 here_cfg_dir
 
-Returns the path for the C<etc> directory below the current directory.
+Returns the path for the C<etc> directory below the current working directory.
 
 =cut
 
@@ -329,6 +411,44 @@ sub user_cfg_dir
     return &{$user_cfg_dir}(@cfg_base);
 }
 
+=head2 xdg_config_home
+
+Returns the user configuration directory for desktop applications.
+If C<< $ENV{XDG_CONFIG_HOME} >> is not set, for MSWin32 the value
+of C<< $ENV{APPDATA} >> is return and on Unices the C<.config> directory
+in the users home folder. Without L<File::HomeDir>, on Unices the returned
+list might be empty.
+
+=cut
+
+my $xdg_config_home = sub {
+    my @cfg_base = @_;
+    my @dirs;
+
+    if( $ENV{XDG_CONFIG_HOME} )
+    {
+	@dirs = split( ":", $ENV{XDG_CONFIG_HOME} );
+	@dirs = map { File::Spec->catdir( $_, @cfg_base ) } @dirs;
+    }
+    elsif ( $^O eq "MSWin32" )
+    {
+        push( @dirs, File::Spec->catdir( $ENV{APPDATA}, @cfg_base ) );
+    }
+    else
+    {
+	push( @dirs, File::Spec->catdir( File::HomeDir->my_home(), ".config", @cfg_base ) )
+	  if ($haveFileHomeDir);
+    }
+};
+
+sub xdg_config_home
+{
+    my @cfg_base = @_;
+    1 < scalar(@cfg_base)
+      and croak "xdg_config_home(;\$), not xdg_config_home(" . join( ",", ("\$") x scalar(@cfg_base) ) . ")";
+    return &{$xdg_config_home}(@cfg_base);
+}
+
 =head2 config_dirs
 
     @cfgdirs = config_dirs();
@@ -347,9 +467,16 @@ sub config_dirs
     my @dirs = ();
 
     push( @dirs,
-          &{$system_cfg_dir}(@cfg_base), &{$machine_cfg_dir}(@cfg_base), &{$core_cfg_dir}(@cfg_base),
-          &{$site_cfg_dir}(@cfg_base),   &{$vendor_cfg_dir}(@cfg_base),  &{$local_cfg_dir}(@cfg_base),
-          &{$here_cfg_dir}(@cfg_base), &{$user_cfg_dir}(@cfg_base), );
+          &{$system_cfg_dir}(@cfg_base), &{$desktop_cfg_dir}(@cfg_base), &{$local_cfg_dir}(@cfg_base), );
+
+    if( 0 == scalar(@cfg_base) )
+    {
+	push( @dirs, &{$singleapp_cfg_dir}() );
+    }
+
+    push( @dirs,
+          &{$core_cfg_dir}(@cfg_base), &{$site_cfg_dir}(@cfg_base),   &{$vendor_cfg_dir}(@cfg_base),  
+          &{$here_cfg_dir}(@cfg_base), &{$user_cfg_dir}(@cfg_base), &{$xdg_config_home}(@cfg_base), );
 
     @dirs = grep { -d $_ && -r $_ } uniq(@dirs);
 
@@ -396,6 +523,13 @@ L<http://search.cpan.org/dist/File-ConfigDir/>
 
 =back
 
+=head1 ACKNOWLEDGEMENTS
+
+Thanks are sent out to Lars Dieckow for his suggestion to add support
+for the Base Directory Specification of the Free Desktop Group. Matthew
+S. Trout earns the credit to suggest C<singleapp_cfg_dir> and remind
+about C</usr/local/etc>.
+
 =head1 LICENSE AND COPYRIGHT
 
 Copyright 2010 Jens Rehsack.
@@ -405,6 +539,10 @@ under the terms of either: the GNU General Public License as published
 by the Free Software Foundation; or the Artistic License.
 
 See http://dev.perl.org/licenses/ for more information.
+
+=head1 SEE ALSO
+
+L<File::HomeDir>, L<File::ShareDir>, L<File::BaseDir> (Unices only)
 
 =cut
 
