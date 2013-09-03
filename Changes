@@ -1,26 +1,26 @@
-Revision history for File-ConfigDir
+Revision history for Perl module File::ConfigDir
 
-0.005   September 3rd, 2013
-	- move to GitHub
-	- fix xdg_config_dir/xdg_config_home
-	- commit fox for rt#69263 (includes fix for rt#82696)
+0.005 2013-09-03
+    - move to GitHub
+    - fix xdg_config_dir/xdg_config_home
+    - commit fox for rt#69263 (includes fix for rt#82696)
 
-0.004   July 30th, 2010
-	- make helper function uniq private (_uniq) to avoid
-	  Pod::Coverage test fail on systems without List::MoreUtils
+0.004 2010-07-30
+    - make helper function uniq private (_uniq) to avoid
+      Pod::Coverage test fail on systems without List::MoreUtils
 
-0.003   July 30th, 2010
-        - fix typo and use here_cfg_dir instead of user_cfg_dir twice
-	- add singleapp_cfg_dir and locallib_cfg_dir to free local_cfg_dir
-	  for FHS /usr/local/etc (suggested by mst)
-	- add XDG Base Directory Specification support (suggested by
-	  daxim)
-	- update test for config_dirs - BinGOs test system users don't
-	  have a home directory
+0.003 2010-07-30
+    - fix typo and use here_cfg_dir instead of user_cfg_dir twice
+    - add singleapp_cfg_dir and locallib_cfg_dir to free local_cfg_dir
+      for FHS /usr/local/etc (suggested by mst)
+    - add XDG Base Directory Specification support (suggested by
+      daxim)
+    - update test for config_dirs - BinGOs test system users don't
+      have a home directory
 
-0.002   July 27th, 2010
-	- add here_cfg_dir
+0.002 2010-07-27
+    - add here_cfg_dir
 
-0.001   July 26th, 2010
-        First version, released on an unsuspecting world.
+0.001 2010-07-26
+    - First version, released on an unsuspecting world.
 
