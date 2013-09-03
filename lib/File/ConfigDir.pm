@@ -439,6 +439,8 @@ my $xdg_config_home = sub {
 	push( @dirs, File::Spec->catdir( File::HomeDir->my_home(), ".config", @cfg_base ) )
 	  if ($haveFileHomeDir);
     }
+
+    return @dirs;
 };
 
 sub xdg_config_home
