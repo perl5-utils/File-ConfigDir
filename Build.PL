@@ -19,7 +19,8 @@ my $builder = Module::Build->new(
 	'File::Spec'     => 0,
     },
     add_to_cleanup     => ['File-ConfigDir-*'],
-    create_makefile_pl => 'traditional',
+    meta_merge => { resources => { repository => "https://github.com/perl5-utils/File-ConfigDir", }, },
+    test_files => join( ' ' => 't/*.t xt/*.t' ),
 );
 
 $builder->create_build_script();
