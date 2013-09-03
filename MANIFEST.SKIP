@@ -1,4 +1,6 @@
 \B\.svn\b
+\B\.git\b
+\.gitignore$
 \.[Bb][Aa][Kk]$
 \.orig$
 \.old$
@@ -8,9 +10,6 @@
 ^Makefile$
 ^Build$
 ^Build\.bat$
-CVS/.*
-\.svn/.*
-\.cvsignore$
 \.Inline/.*
 _Inline/.*
 \.bak$
@@ -26,6 +25,8 @@ _Inline/.*
 ^_build/.*
 ~$
 .*\.planner
-^MYMETA.yml$
 ^\..*
 File-ConfigDir-.*
+\bxt
+^MYMETA\.json$
+^MYMETA\..*$
