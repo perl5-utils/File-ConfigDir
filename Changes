@@ -1,5 +1,10 @@
 Revision history for File-ConfigDir
 
+0.005   September 3rd, 2013
+	- move to GitHub
+	- fix xdg_config_dir/xdg_config_home
+	- commit fox for rt#69263 (includes fix for rt#82696)
+
 0.004   July 30th, 2010
 	- make helper function uniq private (_uniq) to avoid
 	  Pod::Coverage test fail on systems without List::MoreUtils
