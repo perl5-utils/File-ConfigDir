@@ -1,5 +1,8 @@
 Revision history for Perl module File::ConfigDir
 
+0.006
+    - Reformatted as per CPAN::Changes::Spec by Neil Bowers
+
 0.005 2013-09-03
     - move to GitHub
     - fix xdg_config_dir/xdg_config_home
