@@ -24,7 +24,7 @@ foreach my $fn (@supported_functions)
     ok( $faddr = File::ConfigDir->can($fn), "Can $fn" );
     my @dirs = &{$faddr}();
     note( "$fn: " . join( ",", @dirs ) );
-    if ( "config_dirs" eq $fn )
+    if ( $fn =~ m/(?:xdg_)?"config_dirs/ or $fn =~ m/(?:machine|desktop)_cfg_dir/ )
     {
         ok( scalar @dirs >= 1, "config_dirs" ) or diag( join( ",", @dirs ) );    # we expect at least system_cfg_dir
     }
