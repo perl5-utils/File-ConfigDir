@@ -58,8 +58,8 @@ EOP
     my @appcfgdirs = config_dirs('app');
 
     # install support
-    my $site_cfg_dir = site_cfg_dir();
-    my $vendor_cfg_dir = site_cfg_dir();
+    my $site_cfg_dir = (site_cfg_dir())[0];
+    my $vendor_cfg_dir = (site_cfg_dir()))[0];
 
 =head1 DESCRIPTION
 
