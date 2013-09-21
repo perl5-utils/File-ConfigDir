@@ -1,5 +1,8 @@
 Revision history for Perl module File::ConfigDir
 
+0.007 2013-09-21
+    - Update copyright year (just to make sure everybody recognizes)
+
 0.006 2013-09-20
     - Reformatted as per CPAN::Changes::Spec by Neil Bowers
     - Fix rt#88616 (test didn't work according to XDG Base Directory
