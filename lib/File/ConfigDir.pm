@@ -474,6 +474,13 @@ sub xdg_config_home
     return &{$xdg_config_home}(@cfg_base);
 }
 
+my ( @extensible_bases, @pure_bases );
+push( @extensible_bases,
+      $system_cfg_dir, $desktop_cfg_dir, $local_cfg_dir,  $singleapp_cfg_dir,
+      $core_cfg_dir,   $site_cfg_dir,    $vendor_cfg_dir, $here_cfg_dir,
+      $user_cfg_dir,   $xdg_config_home );
+push( @pure_bases, 3 );
+
 =head2 config_dirs
 
     @cfgdirs = config_dirs();
@@ -492,22 +499,13 @@ sub config_dirs
       . join( ",", ("\$") x scalar(@cfg_base) ) . ")";
     my @dirs = ();
 
-    push( @dirs,
-          &{$system_cfg_dir}(@cfg_base),
-          &{$desktop_cfg_dir}(@cfg_base),
-          &{$local_cfg_dir}(@cfg_base),
-        );
-
-    if ( 0 == scalar(@cfg_base) )
+    my $pure_idx = 0;
+    foreach my $idx ( 0 .. $#extensible_bases )
     {
-        push( @dirs, &{$singleapp_cfg_dir}() );
+        my $pure;
+        $pure_idx <= $#pure_bases and $idx == $pure_bases[$pure_idx] and $pure = ++$pure_idx;
+        push( @dirs, &{ $extensible_bases[$idx] }( ( $pure ? () : @cfg_base ) ) );
     }
-
-    push( @dirs,
-          &{$core_cfg_dir}(@cfg_base),   &{$site_cfg_dir}(@cfg_base),
-          &{$vendor_cfg_dir}(@cfg_base), &{$here_cfg_dir}(@cfg_base),
-          &{$user_cfg_dir}(@cfg_base),   &{$xdg_config_home}(@cfg_base),
-        );
 
     @dirs = grep { -d $_ && -r $_ } _uniq(@dirs);
 
