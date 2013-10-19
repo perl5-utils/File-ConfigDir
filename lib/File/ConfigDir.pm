@@ -512,6 +512,29 @@ sub config_dirs
     return @dirs;
 }
 
+=head2 _plug_dir_source
+
+    my $dir_src = sub { return _better_config_dir(@_); }
+    File::ConfigDir::_plug_dir_source($dir_src);
+
+    my $pure_src = sub { return _better_config_plain_dir(@_); }
+    File::ConfigDir::_plug_dir_source($pure_src, 1); # see 2nd arg is true
+
+Registers more sources to ask for suitable directories to check or search
+for config files. Each L</config_dirs> will traverse them in subsequent
+invokations, too.
+
+=cut
+
+sub _plug_dir_source
+{
+    my ($dir_source, $pure) = @_;
+    push(@extensible_bases, $dir_source);
+    $pure and push(@pure_bases, $#extensible_bases);
+    return;
+}
+
+
 =head1 AUTHOR
 
 Jens Rehsack, C<< <rehsack at cpan.org> >>
