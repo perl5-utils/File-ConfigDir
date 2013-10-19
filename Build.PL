@@ -18,6 +18,7 @@ my $builder = Module::Build->new(
                               requires => {
                                             'Carp'           => 0,
                                             'File::Basename' => 0,
+                                            'File::Path'     => '2.00',
                                             'File::Spec'     => 0,
                                           },
                               add_to_cleanup => ['File-ConfigDir-*'],
