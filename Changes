@@ -1,5 +1,9 @@
 Revision history for Perl module File::ConfigDir
 
+0.008 2013-10-19
+    - introduce pluggable dir sources
+    - add developer requires for runs from repository clones
+
 0.007 2013-09-21
     - Update copyright year (just to make sure everybody recognizes)
 
