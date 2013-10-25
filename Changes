@@ -1,5 +1,9 @@
 Revision history for Perl module File::ConfigDir
 
+0.009 2013-10-25
+    - add API to allow plugins to improve registration (speeds
+      up loading)
+
 0.008 2013-10-19
     - introduce pluggable dir sources
     - add developer requires for runs from repository clones
