@@ -524,14 +524,21 @@ Registers more sources to ask for suitable directories to check or search
 for config files. Each L</config_dirs> will traverse them in subsequent
 invokations, too.
 
+Returns the number of directory sources in case of succes. Returns nothing
+when C<$dir_src> is not a code ref.
+
 =cut
 
 sub _plug_dir_source
 {
     my ($dir_source, $pure) = @_;
+
+    $dir_source or return;
+    "CODE" eq ref $dir_source or return;
+
     push(@extensible_bases, $dir_source);
     $pure and push(@pure_bases, $#extensible_bases);
-    return;
+    return scalar @extensible_bases;
 }
 
 

@@ -47,8 +47,11 @@ my $pure_src = sub {
     return File::Spec->catdir( $test_dir, 'pure' );
 };
 
-File::ConfigDir::_plug_dir_source($plugg_src);
-File::ConfigDir::_plug_dir_source($pure_src, "0E0");
+ok(File::ConfigDir::_plug_dir_source($plugg_src), "registered extensible plugin");
+ok(File::ConfigDir::_plug_dir_source($pure_src, "0E0"), "registered pure plugin");
+
+ok(!File::ConfigDir::_plug_dir_source(), "registered nothing");
+ok(!File::ConfigDir::_plug_dir_source(undef), "registered undef");
 
 my @dirs = config_dirs();
 note( "config_dirs: " . join( ",", @dirs ) );
