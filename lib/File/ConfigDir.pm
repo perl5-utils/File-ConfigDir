@@ -584,14 +584,14 @@ L<http://search.cpan.org/dist/File-ConfigDir/>
 
 =head1 ACKNOWLEDGEMENTS
 
-Thanks are sent out to Lars Dieckow for his suggestion to add support
-for the Base Directory Specification of the Free Desktop Group. Matthew
-S. Trout earns the credit to suggest C<singleapp_cfg_dir> and remind
-about C</usr/local/etc>.
+Thanks are sent out to Lars Dieckow (daxim) for his suggestion to add
+support for the Base Directory Specification of the Free Desktop Group.
+Matthew S. Trout (mst) earns the credit to suggest C<singleapp_cfg_dir>
+and remind about C</usr/local/etc>.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2010-2013 Jens Rehsack.
+Copyright 2010-2014 Jens Rehsack.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published
