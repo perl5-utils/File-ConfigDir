@@ -1,11 +1,16 @@
 Revision history for Perl module File::ConfigDir
 
+0.012 2014-03-21
+    - prepare for upcoming List::MoreUtils 0.4xx
+
 0.011 2014-01-06
     - add forgotton 0.010 Changelog
+
 0.010 2014-01-06
     - bump copyright year
     - improve acknowledgements
     - rely on BAIL_OUT of Test::More instead of simulating it
+
 0.009 2013-10-25
     - add API to allow plugins to improve registration (speeds
       up loading)
