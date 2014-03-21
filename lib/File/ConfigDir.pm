@@ -37,20 +37,14 @@ eval {
     $haveFileHomeDir = 1;
 };
 
-if ( eval { require List::MoreUtils; } )
-{
-    *_uniq = \&List::MoreUtils::uniq;
-}
-else
-{
+eval { use List::MoreUtils 'uniq'; };
+__PACKAGE__->can("uniq") or eval <<'EOP';
     # from PP part of List::MoreUtils
-    eval <<'EOP';
-sub _uniq(&@) {
+sub uniq(&@) {
     my %h;
     map { $h{$_}++ == 0 ? $_ : () } @_;
 }
 EOP
-}
 
 =head1 SYNOPSIS
 
@@ -507,7 +501,7 @@ sub config_dirs
         push( @dirs, &{ $extensible_bases[$idx] }( ( $pure ? () : @cfg_base ) ) );
     }
 
-    @dirs = grep { -d $_ && -r $_ } _uniq(@dirs);
+    @dirs = grep { -d $_ && -r $_ } uniq(@dirs);
 
     return @dirs;
 }
