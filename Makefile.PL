@@ -10,6 +10,7 @@ my %RUN_DEPS = (
                  'File::Basename' => 0,
                  'File::Path'     => '2.00',
                  'File::Spec'     => 0,
+                 'List::MoreUtils' => '0.22',
                );
 my %CONFIGURE_DEPS = (
                        'ExtUtils::MakeMaker' => 0,
@@ -45,8 +46,7 @@ WriteMakefile1(
                                            test    => { requires => {%TEST_DEPS} },
                                            runtime => {
                                                         recommends => {
-                                                                        'File::HomeDir'   => '0.50',
-                                                                        'List::MoreUtils' => '0.22',
+                                                                        'File::HomeDir'   => '0.50'
                                                                       },
                                                         requires => {
                                                                       %RUN_DEPS,
