@@ -37,7 +37,7 @@ eval {
     $haveFileHomeDir = 1;
 };
 
-eval { use List::MoreUtils 'uniq'; };
+eval "use List::MoreUtils qw/uniq/;";
 __PACKAGE__->can("uniq") or eval <<'EOP';
     # from PP part of List::MoreUtils
 sub uniq(&@) {
