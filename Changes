@@ -1,6 +1,9 @@
 Revision history for Perl module File::ConfigDir
 
-0.013 2014-03-21
+0.014 2014-nn-nn
+    - 
+
+0.013 2014-04-28
     - fix upcoming LMU preparation (keep L::MU a recommendation)
 
 0.012 2014-03-21
