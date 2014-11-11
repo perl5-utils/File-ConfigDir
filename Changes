@@ -1,7 +1,10 @@
 Revision history for Perl module File::ConfigDir
 
-0.014 2014-nn-nn
-    - 
+0.014 2014-11-11
+    - Rework Makefile.PL and add more author tests
+    - fix typo in pod
+    - Update README - Installation instructions (contributed by Martin
+      McGrath)
 
 0.013 2014-04-28
     - fix upcoming LMU preparation (keep L::MU a recommendation)
