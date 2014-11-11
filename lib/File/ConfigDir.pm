@@ -16,7 +16,7 @@ File::ConfigDir - Get directories of configuration files
 
 =cut
 
-$VERSION = '0.014';
+$VERSION = '0.015';
 @ISA     = qw(Exporter);
 @EXPORT  = ();
 @EXPORT_OK = (
