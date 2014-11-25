@@ -1,5 +1,9 @@
 Revision history for Perl module File::ConfigDir
 
+0.015 2014-11-25
+    - replace README by README.md for better welcome on eg. GitHub
+    - improve related author test
+
 0.014 2014-11-11
     - Rework Makefile.PL and add more author tests
     - fix typo in pod
