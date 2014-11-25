@@ -1,3 +1,5 @@
+## Name
+
 File::ConfigDir
 
 ## Description
@@ -8,7 +10,7 @@ and will always try to Do The Right Thing(tm).
 
 ## Build/Installation
 
-  cpan File::ConfigDir::Plack
+  cpan File::ConfigDir
 
 ## Copyright/License
 
