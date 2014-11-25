@@ -6,4 +6,8 @@ use strict;
 use warnings;
 
 use Test::More;
-use Test::Kwalitee;
+use Test::Kwalitee 'kwalitee_ok';
+
+kwalitee_ok();
+
+done_testing;
