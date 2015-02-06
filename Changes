@@ -1,5 +1,11 @@
 Revision history for Perl module File::ConfigDir
 
+0.016 2015-02-06
+    - Update copyright year
+    - use FindBin instead of $0 (suggested by Tina Müller via RT#101699)
+    - style fixes
+    - metadata updates and tweaks
+
 0.015 2014-11-25
     - replace README by README.md for better welcome on eg. GitHub
     - improve related author test
