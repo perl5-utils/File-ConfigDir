@@ -14,7 +14,7 @@ and will always try to Do The Right Thing(tm).
 
 ## Copyright/License
 
-Copyright (C) 2010-2014 Jens Rehsack
+Copyright (C) 2010-2015 Jens Rehsack
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published
