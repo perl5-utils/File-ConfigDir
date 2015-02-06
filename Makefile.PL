@@ -10,6 +10,7 @@ my %RUN_DEPS = (
     'File::Basename' => 0,
     'File::Path'     => '2.00',
     'File::Spec'     => 0,
+    'FindBin'        => 0,
 );
 my %CONFIGURE_DEPS = (
     'ExtUtils::MakeMaker' => 0,

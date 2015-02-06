@@ -6,9 +6,11 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
 use Carp qw(croak);
 use Config;
+use Cwd ();
 use Exporter ();
-require File::Basename;
-require File::Spec;
+use FindBin ();
+use File::Basename ();
+use File::Spec ();
 
 =head1 NAME
 
@@ -289,20 +291,19 @@ sub vendor_cfg_dir
 =head2 singleapp_cfg_dir
 
 Returns the configuration file for standalone installed applications. In
-Unix speak, installing JRE to C<< /usr/local/jre-<version> >> means there is a
-C<< /usr/local/jre-<version>/bin/java >> and going from it's directory name
-one above and into C<etc> there is the I<singleapp_cfg_dir>. For a Perl
-module it means, we're assuming that C<$0> is installed as a standalone
-package somewhere, eg. into C</usr/pkg> - as recommended for pkgsrc ;)
+Unix speak, installing JRE to C<< /usr/local/jre-<version> >> means there is
+a C<< /usr/local/jre-<version>/bin/java >> and going from it's directory
+name one above and into C<etc> there is the I<singleapp_cfg_dir>. For a
+Perl module it means, we're assuming that C<$FindBin::Bin> is installed as
+a standalone package somewhere, eg. into C</usr/pkg> - as recommended for
+pkgsrc ;)
 
 =cut
 
 my $singleapp_cfg_dir = sub {
     my @dirs;
 
-    my $appbin = File::Basename::dirname($0);
-    my $appdir = File::Basename::dirname($appbin);
-    push( @dirs, File::Spec->catdir( $appdir, "etc" ) );
+    push @dirs, Cwd::abs_path( File::Spec->catdir( $FindBin::RealDir, "..", "etc" ) );
 
     return @dirs;
 };
