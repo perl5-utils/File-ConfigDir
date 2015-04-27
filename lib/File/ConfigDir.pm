@@ -281,7 +281,12 @@ pkgsrc ;)
 =cut
 
 my $singleapp_cfg_dir = sub {
-    my @dirs = ( map {eval {Cwd::abs_path($_)} or File::Spec->canonpath($_)} File::Spec->catdir( $FindBin::RealDir, "..", "etc" ) );
+    my @dirs = (
+        map
+        {
+            eval { Cwd::abs_path($_) } or File::Spec->canonpath($_)
+        } File::Spec->catdir( $FindBin::RealDir, "..", "etc" )
+    );
     @dirs;
 };
 
