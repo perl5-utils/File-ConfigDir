@@ -1,5 +1,9 @@
 Revision history for Perl module File::ConfigDir
 
+0.017 2015-04-27
+    - add irc channel and mailing list to meta data
+    - apply fix regarding "Cwd::abs_path is not portable" from jddurand
+
 0.016 2015-02-06
     - Update copyright year
     - use FindBin instead of $0 (suggested by Tina Müller via RT#101699)
