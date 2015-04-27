@@ -36,7 +36,9 @@ WriteMakefile1(
                 web    => 'http://rt.cpan.org/Public/Dist/Display.html?Name=File-ConfigDir',
                 mailto => 'bug-File-ConfigDir@rt.cpan.org',
             },
-            license => 'http://dev.perl.org/licenses/',
+            license       => 'http://dev.perl.org/licenses/',
+            x_IRC         => "irc://irc.perl.org/#toolchain",
+            x_MailingList => "mailto:cpan-workers\@perl.org'",
         },
         prereqs => {
             develop => {
