@@ -584,7 +584,7 @@ and remind about C</usr/local/etc>.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2010-2015 Jens Rehsack.
+Copyright 2010-2017 Jens Rehsack.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published
