@@ -26,7 +26,7 @@ $VERSION   = '0.018';
     qw(xdg_config_dirs machine_cfg_dir),
     qw(core_cfg_dir site_cfg_dir vendor_cfg_dir),
     qw(locallib_cfg_dir local_cfg_dir),
-    qw(here_cfg_dir singleapp_cfg_dir),
+    qw(here_cfg_dir singleapp_cfg_dir vendorapp_cfg_dir),
     qw(xdg_config_home user_cfg_dir)
 );
 %EXPORT_TAGS = (
@@ -276,7 +276,7 @@ a C<< /usr/local/jre-<version>/bin/java >> and going from it's directory
 name one above and into C<etc> there is the I<singleapp_cfg_dir>. For a
 Perl module it means, we're assuming that C<$FindBin::Bin> is installed as
 a standalone package somewhere, eg. into C</usr/pkg> - as recommended for
-pkgsrc ;)
+L<pkgsrc|http://www.pkgsrc.org/>.
 
 =cut
 
@@ -296,6 +296,37 @@ sub singleapp_cfg_dir
     0 == scalar(@cfg_base)
       or croak "singleapp_cfg_dir(), not singleapp_cfg_dir(" . join( ",", ("\$") x scalar(@cfg_base) ) . ")";
     $singleapp_cfg_dir->();
+}
+
+=head2 vendorapp_cfg_dir
+
+Returns the configuration file for vendot installed applications. In Unix
+speak, installing bacula to C<< /opt/${vendor} >> means there is
+a C<< /opt/${vendor}/bin/bacula >> and going from it's directory
+name one above and into C<etc> there is the I<vendorapp_cfg_dir>. For a
+Perl module it means, we're assuming that C<$FindBin::Bin> is installed as
+a standalone package somewhere, eg. into C</usr/pkg> - as recommended for
+L<pkgsrc|http://www.pkgsrc.org/>.
+
+=cut
+
+my $vendorapp_cfg_dir = sub {
+    my @cfg_base = @_;
+    my @dirs = (
+        map
+        {
+            eval { Cwd::abs_path($_) } or File::Spec->canonpath($_)
+        } File::Spec->catdir( $FindBin::RealDir, "..", "etc", @cfg_base )
+    );
+    @dirs;
+};
+
+sub vendorapp_cfg_dir
+{
+    my @cfg_base = @_;
+    1 < scalar(@cfg_base)
+      and croak "vendorapp_cfg_dir(;\$), not vendorapp_cfg_dir(" . join( ",", ("\$") x scalar(@cfg_base) ) . ")";
+    $vendorapp_cfg_dir->(@cfg_base);
 }
 
 =head2 local_cfg_dir
@@ -441,7 +472,7 @@ sub xdg_config_home
 
 my ( @extensible_bases, @pure_bases );
 push( @extensible_bases,
-    $system_cfg_dir, $desktop_cfg_dir, $local_cfg_dir, $singleapp_cfg_dir, $core_cfg_dir,
+    $system_cfg_dir, $desktop_cfg_dir, $local_cfg_dir, $singleapp_cfg_dir, $vendorapp_cfg_dir, $core_cfg_dir,
     $site_cfg_dir,   $vendor_cfg_dir,  $here_cfg_dir,  $user_cfg_dir,      $xdg_config_home );
 push( @pure_bases, 3 );
 
