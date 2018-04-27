@@ -535,7 +535,7 @@ Registers more sources to ask for suitable directories to check or search
 for config files. Each L</config_dirs> will traverse them in subsequent
 invocations, too.
 
-Returns the number of directory sources in case of succes. Returns nothing
+Returns the number of directory sources in case of success. Returns nothing
 when C<$dir_src> is not a code ref.
 
 =cut
