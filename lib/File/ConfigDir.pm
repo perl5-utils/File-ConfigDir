@@ -1,8 +1,9 @@
 package File::ConfigDir;
 
-use warnings;
 use strict;
-use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
+use warnings;
+use parent 'Exporter';
+use vars qw($VERSION @EXPORT_OK %EXPORT_TAGS);
 
 use Carp qw(croak);
 use Config;
@@ -19,8 +20,6 @@ File::ConfigDir - Get directories of configuration files
 =cut
 
 $VERSION   = '0.018';
-@ISA       = qw(Exporter);
-@EXPORT    = ();
 @EXPORT_OK = (
     qw(config_dirs system_cfg_dir desktop_cfg_dir),
     qw(xdg_config_dirs machine_cfg_dir),
@@ -33,16 +32,10 @@ $VERSION   = '0.018';
     ALL => [@EXPORT_OK],
 );
 
-my $haveFileHomeDir = 0;
-eval {
-    require File::HomeDir;
-    $haveFileHomeDir = 1;
-};
-
-eval "use List::MoreUtils qw/uniq/;";
-__PACKAGE__->can("uniq") or eval <<'EOP';
+eval "use List::MoreUtils qw/distinct/;";    ## no strict (BuiltinFunctions::ProhibitStringyEval)
+__PACKAGE__->can("distinct") or eval <<'EOP';
     # from PP part of List::MoreUtils
-sub uniq(&@) {
+sub distinct(&@) {
     my %h;
     map { $h{$_}++ == 0 ? $_ : () } @_;
 }
@@ -407,6 +400,14 @@ sub here_cfg_dir
     $here_cfg_dir->(@cfg_base);
 }
 
+my $haveFileHomeDir;
+
+BEGIN
+{
+    defined $haveFileHomeDir or $haveFileHomeDir = eval "use File::HomeDir; 1";
+    defined $haveFileHomeDir or $haveFileHomeDir = 0;
+}
+
 =head2 user_cfg_dir
 
 Returns the users home folder using L<File::HomeDir>. Without
@@ -418,7 +419,12 @@ my $user_cfg_dir = sub {
     my @cfg_base = @_;
     my @dirs;
 
-    $haveFileHomeDir and @dirs = (File::Spec->catdir(File::HomeDir->my_home(), map { "." . $_ } @cfg_base));
+    my $homedir;
+    $haveFileHomeDir and $homedir = File::HomeDir->my_home();
+    $homedir |= $ENV{HOME} if defined $ENV{HOME};
+    $homedir |= File::Spec->catpath($ENV{HOMEDRIVE}, $ENV{HOMEPATH}) if defined $ENV{HOMEDRIVE} and defined $ENV{HOMEPATH};
+
+    $homedir and @dirs = (File::Spec->catdir($homedir, map { "." . $_ } @cfg_base));
 
     @dirs;
 };
@@ -501,7 +507,7 @@ sub config_dirs
         push(@dirs, $extensible_bases[$idx]->(($pure ? () : @cfg_base)));
     }
 
-    @dirs = grep { -d $_ && -r $_ } uniq(@dirs);
+    @dirs = grep { -d $_ && -r $_ } distinct(@dirs);
 
     @dirs;
 }
