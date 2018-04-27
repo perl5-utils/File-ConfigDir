@@ -26,7 +26,7 @@ File::ConfigDir - Get directories of configuration files
 
 =cut
 
-$VERSION   = '0.018';
+$VERSION   = '0.019';
 @EXPORT_OK = (
     qw(config_dirs system_cfg_dir desktop_cfg_dir),
     qw(xdg_config_dirs machine_cfg_dir),
@@ -601,7 +601,7 @@ and remind about C</usr/local/etc>.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2010-2017 Jens Rehsack.
+Copyright 2010-2018 Jens Rehsack.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published
