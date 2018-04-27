@@ -51,6 +51,7 @@ WriteMakefile1(
                     'Test::Pod::Coverage'                 => 0,
                     'Test::Pod::Spelling::CommonMistakes' => 0,
                     'Test::Spelling'                      => 0,
+                    'Test::Without::Module'               => 0,
                 },
             },
             configure => {
