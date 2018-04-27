@@ -51,6 +51,7 @@ ok(File::ConfigDir::_plug_dir_source($pure_src, "0E0"), "registered pure plugin"
 
 ok(!File::ConfigDir::_plug_dir_source(),      "registered nothing");
 ok(!File::ConfigDir::_plug_dir_source(undef), "registered undef");
+ok(!File::ConfigDir::_plug_dir_source(42),    "registered 42");
 
 my @dirs = config_dirs();
 note("config_dirs: " . join(",", @dirs));
