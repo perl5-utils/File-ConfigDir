@@ -60,6 +60,9 @@ WriteMakefile1(
             build   => {requires => {%BUILD_DEPS}},
             test    => {requires => {%TEST_DEPS}},
             runtime => {
+                suggests => {
+                    'local::lib' => '1.008008',
+                },
                 recommends => {
                     'File::HomeDir'       => '0.50',
                     'List::MoreUtils'     => '0.0.419',

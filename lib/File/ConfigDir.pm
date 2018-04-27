@@ -357,17 +357,20 @@ C<etc> directory below it.
 
 =cut
 
+my $haveLocalLib;
+
+BEGIN
+{
+    # uncoverable branch false
+    defined $haveLocalLib or $haveLocalLib = eval "use local::lib (); local::lib->can('active_paths');";
+    defined $haveLocalLib or $haveLocalLib = 0;
+}
+
 my $locallib_cfg_dir = sub {
     my @cfg_base = @_;
     my @dirs;
 
-    if (   $INC{'local/lib.pm'}
-        && $ENV{PERL_MM_OPT}
-        && $ENV{PERL_MM_OPT} =~ m/.*INSTALL_BASE=([^"']*)['"]?$/)
-    {
-        (my $cfgdir = $ENV{PERL_MM_OPT}) =~ s/.*INSTALL_BASE=([^"']*)['"]?$/$1/;
-        push(@dirs, File::Spec->catdir($cfgdir, "etc", @cfg_base));
-    }
+    $haveLocalLib and push(@dirs, map { File::Spec->catdir($_, "etc", @cfg_base) } local::lib->active_paths);
 
     @dirs;
 };
@@ -404,6 +407,7 @@ my $haveFileHomeDir;
 
 BEGIN
 {
+    # uncoverable branch false
     defined $haveFileHomeDir or $haveFileHomeDir = eval "use File::HomeDir; 1";
     defined $haveFileHomeDir or $haveFileHomeDir = 0;
 }
