@@ -1,5 +1,13 @@
 Revision history for Perl module File::ConfigDir
 
+0.020 2018-04-30
+    - spelling fixes (Thanks to Mohammed Anwar for the reminder
+      and pull request)
+    - dependencies correctly expressed
+    - tests for and implementation of _find_common_base_dir
+      fixed
+    - MSWin32 related fixups
+
 0.019 2018-04-27
     - fix local::lib handling and suggest use local::lib
     - find a users homedir even without File::HomeDir
