@@ -35,6 +35,8 @@ SCOPE:
 {
     # override $ENV{HOME} for test
     local $ENV{HOME};
+    local $ENV{HOMEDRIVE};
+    local $ENV{HOMEPATH};
 
     foreach my $fn (qw(user_cfg_dir locallib_cfg_dir))
     {
