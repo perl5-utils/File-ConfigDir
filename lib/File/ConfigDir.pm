@@ -93,8 +93,8 @@ place of the resulting path.
 sub _find_common_base_dir
 {
     my ($dira, $dirb) = @_;
-    my ($va, $da, undef) = File::Spec->splitpath($dira);
-    my ($vb, $db, undef) = File::Spec->splitpath($dirb);
+    my ($va, $da, undef) = File::Spec->splitpath($dira, 1);
+    my ($vb, $db, undef) = File::Spec->splitpath($dirb, 1);
     my @dirsa = File::Spec->splitdir($da);
     my @dirsb = File::Spec->splitdir($db);
     my @commondir;
@@ -105,7 +105,7 @@ sub _find_common_base_dir
         push(@commondir, $dirsa[$i]);
     }
 
-    File::Spec->catdir($va, @commondir);
+    File::Spec->catpath($va, File::Spec->catdir(@commondir));
 }
 
 =head2 system_cfg_dir
