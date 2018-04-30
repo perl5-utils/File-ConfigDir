@@ -18,7 +18,9 @@ my %CONFIGURE_DEPS = (
 my %BUILD_DEPS = ();
 
 my %TEST_DEPS = (
-    'Test::More' => 0.90,
+    'File::Temp'            => 0,
+    'Test::More'            => 0.90,
+    'Test::Without::Module' => 0,
 );
 
 WriteMakefile1(
@@ -51,7 +53,9 @@ WriteMakefile1(
                     'Test::Pod::Coverage'                 => 0,
                     'Test::Pod::Spelling::CommonMistakes' => 0,
                     'Test::Spelling'                      => 0,
-                    'Test::Without::Module'               => 0,
+                },
+                suggests => {
+                    'local::lib' => '1.008008',
                 },
             },
             configure => {
