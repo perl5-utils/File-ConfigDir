@@ -63,15 +63,15 @@ EOP
 
 This module is a helper for installing, reading and finding configuration
 file locations. It's intended to work in every supported Perl5 environment
-and will always try to Do The Right Thing(tm).
+and will always try to Do The Right Thing(TM).
 
 C<File::ConfigDir> is a module to help out when perl modules (especially
 applications) need to read and store configuration files from more than
 one location. Writing user configuration is easy thanks to
 L<File::HomeDir>, but what when the system administrator needs to place
 some global configuration or there will be system related configuration
-(in C</etc> on UNIX(tm) or C<$ENV{windir}> on Windows(tm)) and some
-network configuration in nfs mapped C</etc/p5-app> or
+(in C</etc> on UNIX(TM) or C<$ENV{windir}> on Windows(TM)) and some
+network configuration in NFS mapped C</etc/p5-app> or
 C<$ENV{ALLUSERSPROFILE} . "\\Application Data\\p5-app">, respectively.
 
 C<File::ConfigDir> has no "do what I mean" mode - it's entirely up to the
@@ -85,7 +85,7 @@ tag C<:ALL>.
 =head1 SUBROUTINES/METHODS
 
 All functions can take one optional argument as application specific
-configuration directory. If given, it will be embedded at the right (tm)
+configuration directory. If given, it will be embedded at the right (TM)
 place of the resulting path.
 
 =cut
@@ -270,12 +270,12 @@ sub vendor_cfg_dir
 
 =head2 singleapp_cfg_dir
 
-Returns the configuration file for standalone installed applications. In
+Returns the configuration file for stand-alone installed applications. In
 Unix speak, installing JRE to C<< /usr/local/jre-<version> >> means there is
 a C<< /usr/local/jre-<version>/bin/java >> and going from it's directory
 name one above and into C<etc> there is the I<singleapp_cfg_dir>. For a
 Perl module it means, we're assuming that C<$FindBin::Bin> is installed as
-a standalone package somewhere, eg. into C</usr/pkg> - as recommended for
+a stand-alone package somewhere, e.g. into C</usr/pkg> - as recommended for
 L<pkgsrc|http://www.pkgsrc.org/>.
 
 =cut
@@ -300,12 +300,12 @@ sub singleapp_cfg_dir
 
 =head2 vendorapp_cfg_dir
 
-Returns the configuration file for vendot installed applications. In Unix
+Returns the configuration file for vendor installed applications. In Unix
 speak, installing bacula to C<< /opt/${vendor} >> means there is
 a C<< /opt/${vendor}/bin/bacula >> and going from it's directory
 name one above and into C<etc> there is the I<vendorapp_cfg_dir>. For a
 Perl module it means, we're assuming that C<$FindBin::Bin> is installed as
-a standalone package somewhere, eg. into C</usr/pkg> - as recommended for
+a stand-alone package somewhere, e.g. into C</usr/pkg> - as recommended for
 L<pkgsrc|http://www.pkgsrc.org/>.
 
 =cut
