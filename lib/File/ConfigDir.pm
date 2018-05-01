@@ -26,7 +26,7 @@ File::ConfigDir - Get directories of configuration files
 
 =cut
 
-$VERSION   = '0.020';
+$VERSION   = '0.021';
 @EXPORT_OK = (
     qw(config_dirs system_cfg_dir desktop_cfg_dir),
     qw(xdg_config_dirs machine_cfg_dir),
